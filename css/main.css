@@ -95,6 +95,36 @@ textarea {
    Author's custom styles
    ========================================================================== */
 
+#main{
+    height: 100vh;
+    background-color: #555555;
+}
+
+button{
+    border-radius: 5%;
+}
+
+#display{
+    height: 25%;
+    width: 50%;
+    margin: auto;
+    display: block;
+    background-color: #b3d4fc;
+}
+
+#numbers{
+    height: 5%;
+    width: 50%;
+    margin: auto;
+    padding-top: 2%;
+}
+
+#operators{
+    height: 5%;
+    width: 50%;
+    margin: auto;
+    padding-top: 5%;
+}
 
 
 
