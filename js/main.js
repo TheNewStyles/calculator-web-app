@@ -2,27 +2,32 @@ $(function(){
     var display = $("#display");
     var number = "";
     var newNumber = "";
-    var newstringreplaced;
     var total=0;
+    var equalsPressed = false;
 
     var buttons = $(":button").not("#equals, #clear, #clearall");
     buttons.on({
         "click":function () {
             newNumber = $(this).text();
 
-            if (!$(this).hasClass("operator")) {
-                number += newNumber;
-            } else {
+            if ($(this).hasClass("operator")) {
                 if (isNaN(number[number.length - 1])) {
                     return;
                 }
                 number += newNumber;
+            } else {
+                number += newNumber;
             }
 
-            $(display).text(number);
+            //allows chaining after totals have been calculated
+            if(equalsPressed){
+                total += newNumber;
+                $(display).text(total);
+            }else{
+                $(display).text(number);
+            }
         }
     });
-
 
     //on equals click
     var equals = $("#equals");
@@ -49,10 +54,11 @@ $(function(){
                         i=0;
                         break;
                     default:
-                        //don't do anything
-                        //break;
+                        break;
                 }
             }
+            $(display).text(total);
+            equalsPressed = true;
         }
     });
 
@@ -61,13 +67,10 @@ $(function(){
         splitString = splitString.replace(/\+/g, ",+,");
         splitString = splitString.replace(/\*/g, ",*,");
         splitString = splitString.replace(/\//g, ",/,");
-        newstringreplaced = splitString.split(",");
-        removeOperatorsFromEndOfInput(newstringreplaced);
+        var newStringReplaced = splitString.split(",");
+        removeOperatorsFromEndOfInput(newStringReplaced);
 
-        // console.log("split string", splitString);
-        // console.log("new string", newstringreplaced);
-
-        return newstringreplaced;
+        return newStringReplaced;
     }
 
     function removeOperatorsFromEndOfInput(num) {
@@ -84,22 +87,28 @@ $(function(){
         }
     }
 
-    //on addition click
     function doMath(splitArr, index) {
         var firstNum = parseFloat(splitArr[index-1]);
         var secondNum = parseFloat(splitArr[index+1])
         total = eval( firstNum + splitArr[index] + secondNum );
         splitArr.splice(index-1,index+2);
         splitArr.unshift(total);
-
-        console.log("total", total);
-        console.log("split arr after add", splitArr);
     }
 
-
-    
-    //on allclear
+    var clearAll = $("#clearAll");
+    clearAll.on({
+        "click": function () {
+            total = '';
+            number = '';
+            $(display).text('');
+        }
+    });
 
     //on clear
-
+    // var clear = $("#clear");
+    // clear.on({
+    //     "click": function () {
+    //
+    //     }
+    // });
 });
