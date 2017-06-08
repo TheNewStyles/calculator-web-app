@@ -8,7 +8,16 @@ $(function(){
     var buttons = $(":button").not("#equals, #clear, #clearall");
     buttons.on({
         "click":function () {
-            newNumber = $(this).text();
+            newNumber = $(this).attr('id');
+
+            //TODO allow one decimal
+            //CE button
+            //max digits allowed
+
+            if(display.text() == "Cannot divide by zero"){
+                display.text(' ');
+                total = '';
+            }
 
             if ($(this).hasClass("operator")) {
                 if (isNaN(number[number.length - 1])) {
@@ -35,7 +44,7 @@ $(function(){
         "click": function () {
             var split = splitStringOnOperators(number);
             for(var i=0; i<split.length; i++){
-                console.log(i, split[i], split);
+                // console.log(i, split[i], split);
                 switch(split[i]){
                     case '+':
                         doMath(split,i, '+');
@@ -92,10 +101,16 @@ $(function(){
         var secondNum = parseFloat(splitArr[index+1])
         total = eval( firstNum + splitArr[index] + secondNum );
         splitArr.splice(index-1,index+2);
+
+        if(total == Infinity){
+            total = "Cannot divide by zero";
+            number=0;
+        }
+
         splitArr.unshift(total);
     }
 
-    var clearAll = $("#clearAll");
+    var clearAll = $("#clearAll, #clear");
     clearAll.on({
         "click": function () {
             total = '';
@@ -104,11 +119,11 @@ $(function(){
         }
     });
 
-    //on clear
+
     // var clear = $("#clear");
     // clear.on({
     //     "click": function () {
-    //
+    //         $(display).text('');
     //     }
     // });
 });
