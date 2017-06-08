@@ -3,7 +3,7 @@ A freecodecamp project
 
 Build a JavaScript Calculator
 
-Objective: Build a CodePen.io app that is functionally similar to this: https://codepen.io/FreeCodeCamp/full/rLJZrA/.
+Objective: Build a javascript calculator
 
 Fulfill the below user stories. Use whichever libraries or APIs you need. Give it your own personal style.
 
