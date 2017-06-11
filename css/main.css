@@ -96,6 +96,7 @@ textarea {
    ========================================================================== */
 body{
     background-color: darkcyan;
+    font-family: 'Orbitron', sans-serif;
 }
 
 #calculator_body{
@@ -111,10 +112,11 @@ body{
 
     -webkit-flex-flow: row wrap;
     justify-content: space-around;
+
+    background-color: #292f36;
 }
 
 #display_container{
-    background: tomato;
     padding: 15px;
     width: 90%;
     height: 50vh;
@@ -126,11 +128,14 @@ body{
     display: -ms-flexbox;
     display: -webkit-flex;
     display: flex;
+
+    border-radius: 10px;
+    background-color: rgba(19, 19, 19, .64);
 }
 
 #display{
     padding: 10%;
-    color: white;
+    color: #d63c6b;
     font-weight: bold;
     font-size: 3.5em;
     text-align: center;
@@ -166,28 +171,21 @@ body{
 
     -webkit-flex-flow: row wrap;
     justify-content: space-around;
+    font-weight: bold;
+
 }
 
 .calc_buttons button{
     height: 10vh;
     width: 10vh;
     margin: 5px;
+
+    background-color: #292f36;
+    outline: none;
+    border: 0;
+
+    color: #00a3f5;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 /* ==========================================================================
