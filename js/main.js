@@ -11,8 +11,7 @@ $(function(){
             newNumber = $(this).attr('id');
 
             //TODO allow one decimal
-            //CE button
-            //max digits allowed
+            //TODO CE button
 
             if(display.text() == "Cannot divide by zero"){
                 display.text(' ');
@@ -23,9 +22,13 @@ $(function(){
                 if (isNaN(number[number.length - 1])) {
                     return;
                 }
-                number += newNumber;
+                if(number.length <= 10){
+                    number += newNumber;
+                }
             } else {
-                number += newNumber;
+                if(number.length <= 10) {
+                    number += newNumber;
+                }
             }
 
             //allows chaining after totals have been calculated
