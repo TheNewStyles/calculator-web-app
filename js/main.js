@@ -1,132 +1,90 @@
 $(function(){
-    var display = $("#display");
-    var number = "";
-    var newNumber = "";
-    var total=0;
-    var equalsPressed = false;
+    //var $display = $("#display");
+    //var $clearAll = $("#clearAll, #clear");
+    var $equals = $("#equals");
+    var $numButtons = $(":button").not("#equals, #clear, #clearall");
+    var _infix = '';
+    var infixStack;
 
-    var buttons = $(":button").not("#equals, #clear, #clearall");
-    buttons.on({
+    $numButtons.on({
         "click":function () {
-            newNumber = $(this).attr('id');
-
-            //TODO allow one decimal
-            //TODO CE button
-
-            if(display.text() == "Cannot divide by zero"){
-                display.text(' ');
-                total = '';
-            }
-
-            if ($(this).hasClass("operator")) {
-                if (isNaN(number[number.length - 1])) {
-                    return;
-                }
-                if(number.length <= 10){
-                    number += newNumber;
-                }
-            } else {
-                if(number.length <= 10) {
-                    number += newNumber;
-                }
-            }
-
-            //allows chaining after totals have been calculated
-            if(equalsPressed){
-                total += newNumber;
-                $(display).text(total);
-            }else{
-                $(display).text(number);
-            }
+            var number = $(this).attr('id');
+            _infix += number;
         }
     });
 
-    //on equals click
-    var equals = $("#equals");
-    equals.on({
+    $equals.on({
         "click": function () {
-            var split = splitStringOnOperators(number);
-            for(var i=0; i<split.length; i++){
-                // console.log(i, split[i], split);
-                switch(split[i]){
-                    case '+':
-                        doMath(split,i, '+');
-                        i=0;
-                        break;
-                    case '-':
-                        doMath(split,i);
-                        i=0;
-                        break;
-                    case '/':
-                        doMath(split, i);
-                        i=0;
-                        break;
-                    case '*':
-                        doMath(split, i);
-                        i=0;
-                        break;
-                    default:
-                        break;
-                }
-            }
+
+            var total = toPostFix(_infix, infixStack);
+
             $(display).text(total);
-            equalsPressed = true;
         }
     });
 
-    function splitStringOnOperators(num) {
-        var splitString = num.replace(/\-/g, ",-,");
-        splitString = splitString.replace(/\+/g, ",+,");
-        splitString = splitString.replace(/\*/g, ",*,");
-        splitString = splitString.replace(/\//g, ",/,");
-        var newStringReplaced = splitString.split(",");
-        removeOperatorsFromEndOfInput(newStringReplaced);
+    function toPostFix(infixStr, stack) {
+        var count =0;
+        var postfixStr = "";
+        stack = [];
 
-        return newStringReplaced;
+        //loop through the length of the infix string
+        while(count < infixStr.length){
+            //check of it is operand or not
+            if(isOperand(infixStr[count])) {
+                postfixStr += infixStr[count];
+            } else {
+                //if operator is other than ( )
+                if(infixStr[count] !== '(' && infixStr[count] !== ")"){
+                    while(stack.length > 0){
+                        //Till the time stack's top operator greater than equal to infixStr operator than add to postfixStr else break
+                        if(prec(stack[stack.length-1]) >= prec(infixStr[count])){
+                            postfixStr += stack.pop();
+                        } else {
+                            break;
+                        }
+                    }
+                    //push the current infixStr operator to stack
+                    stack.push(infixStr[count]);
+                } else {
+                    //if infixStr operator is ( than simply push it to stack
+                    if(infixStr[count] === "("){
+                        stack.push(infixStr[count]);
+                    } else {
+                        //if infixStr operator is ) than push all the elements from stack to postfixStr till we get ( from stack
+                        while(stack[stack.length-1] !== '('){
+                            postfixStr += stack.pop();
+                        }
+                        stack.pop();
+                    }
+                }
+            }
+            count++;
+        }
+
+        //Adding the rest of the operand in stack to postfix string
+        while(stack.length > 0){
+            postfixStr += stack.pop();
+        }
+        return postfixStr;
     }
 
-    function removeOperatorsFromEndOfInput(num) {
-        while
-        (
-            num[num.length-1] == '+' ||
-            num[num.length-1] == '-' ||
-            num[num.length-1] == '*' ||
-            num[num.length-1] == '/' ||
-            num[num.length-1] == ''
-        )
-        {
-            num.pop();
+    function prec(operator) {
+        switch (operator){
+            case "^":
+                return 3;
+            case "*":
+            case "/":
+                return 2;
+            case "+":
+            case "-":
+                return 1;
+            default:
+                return 0;
         }
     }
 
-    function doMath(splitArr, index) {
-        var firstNum = parseFloat(splitArr[index-1]);
-        var secondNum = parseFloat(splitArr[index+1])
-        total = eval( firstNum + splitArr[index] + secondNum );
-        splitArr.splice(index-1,index+2);
-
-        if(total == Infinity){
-            total = "Cannot divide by zero";
-            number=0;
-        }
-
-        splitArr.unshift(total);
+    function isOperand(ch) {
+        return ((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <='Z') || (ch >= '1' && ch <= 9));
     }
 
-    var clearAll = $("#clearAll, #clear");
-    clearAll.on({
-        "click": function () {
-            total = '';
-            number = '';
-            $(display).text('');
-        }
-    });
-
-
-    // var clear = $("#clear");
-    // clear.on({
-    //     "click": function () {
-    //         $(display).text('');
-    //     }
-    // });
 });
