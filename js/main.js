@@ -10,15 +10,18 @@ $(function(){
         "click":function () {
             var number = $(this).attr('id');
             _infix += number;
+            $(display).text(_infix);
         }
     });
 
     $equals.on({
         "click": function () {
 
-            var total = toPostFix(_infix, infixStack);
+            var postfix = toPostFix(_infix, infixStack);
 
-            $(display).text(total);
+            var rpn = evalRPN(postfix);
+
+            $(display).text(rpn);
         }
     });
 
@@ -81,6 +84,39 @@ $(function(){
             default:
                 return 0;
         }
+    }
+
+    function evalRPN(tokens) {
+        var returnValue = 0;
+        var operators = "+-*/";
+
+        var stack = [];
+        for (var i=0; i<tokens.length; i++) {
+            if (operators.indexOf(tokens[i]) == -1) {
+                stack.push(tokens[i]);
+            } else {
+                var a = parseInt(stack.pop());
+                var b = parseInt(stack.pop());
+                switch (tokens[i]) {
+                    case "+":
+                        stack.push(a + b);
+                        break;
+                    case "-":
+                        stack.push(b - a);
+                        break;
+                    case "*":
+                        stack.push(a * b);
+                        break;
+                    case "/":
+                        stack.push(b / a);
+                        break;
+                }
+            }
+        }
+
+        returnValue = parseInt(stack.pop());
+
+        return returnValue;
     }
 
     function isOperand(ch) {
