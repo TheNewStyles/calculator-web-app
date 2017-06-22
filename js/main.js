@@ -1,23 +1,46 @@
 $(function(){
-    //var $display = $("#display");
+    var $display = $("#display");
     //var $clearAll = $("#clearAll, #clear");
     var $equals = $("#equals");
     var $numButtons = $(":button").not("#equals, #clear, #clearall");
     var _infix = '';
-    var infixStack;
+    var _displayString = '';
 
     $numButtons.on({
         "click":function () {
-            var number = $(this).attr('id');
-            _infix += number;
-            $(display).text(_infix);
+            var number = $(this).attr('id')
+
+            if ($(this).hasClass("operator")) {
+                if (isNaN(_infix[_infix.length - 1])) {
+                    return;
+                }
+                if(_infix.length <= 10){
+                    _infix += number;
+                }
+            }else {
+                if(_infix.length <= 10) {
+                    _infix += number;
+                }
+            }
+
+             function htmlEntities(str) {
+                 _displayString = str.replace(/\*/g, '&times;').replace(/-/g, '&minus;').replace(/\+/g, '&plus;');
+            }
+
+            htmlEntities(_infix);
+
+            $(display).html(_displayString);// .text(_displayString);
         }
     });
 
     $equals.on({
         "click": function () {
 
-            var postfix = toPostFix(_infix, infixStack);
+            var postfix = toPostFix(_infix);
+            //var htmlEntities = htmlEntities(postfix);
+
+            postfix = postfix.split(" ");
+            postfix.clean("");
 
             var rpn = evalRPN(postfix);
 
@@ -25,10 +48,24 @@ $(function(){
         }
     });
 
-    function toPostFix(infixStr, stack) {
+    function htmlEntities(str) {
+        return str.replace(/&times;/g, '*'); //.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    Array.prototype.clean = function(deleteValue) {
+        for (var i = 0; i < this.length; i++) {
+            if (this[i] == deleteValue) {
+                this.splice(i, 1);
+                i--;
+            }
+        }
+        return this;
+    };
+
+    function toPostFix(infixStr) {
         var count =0;
         var postfixStr = "";
-        stack = [];
+        var stack = [];
 
         //loop through the length of the infix string
         while(count < infixStr.length){
@@ -36,6 +73,7 @@ $(function(){
             if(isOperand(infixStr[count])) {
                 postfixStr += infixStr[count];
             } else {
+                postfixStr += " ";
                 //if operator is other than ( )
                 if(infixStr[count] !== '(' && infixStr[count] !== ")"){
                     while(stack.length > 0){
@@ -54,7 +92,7 @@ $(function(){
                         stack.push(infixStr[count]);
                     } else {
                         //if infixStr operator is ) than push all the elements from stack to postfixStr till we get ( from stack
-                        while(stack[stack.length-1] !== '('){
+                        while(stack[stack.length-1] !== '(' && stack[stack.length-1] !== undefined){
                             postfixStr += stack.pop();
                         }
                         stack.pop();
@@ -66,6 +104,7 @@ $(function(){
 
         //Adding the rest of the operand in stack to postfix string
         while(stack.length > 0){
+            postfixStr += " ";
             postfixStr += stack.pop();
         }
         return postfixStr;
@@ -87,7 +126,6 @@ $(function(){
     }
 
     function evalRPN(tokens) {
-        var returnValue = 0;
         var operators = "+-*/";
 
         var stack = [];
@@ -114,13 +152,13 @@ $(function(){
             }
         }
 
-        returnValue = parseInt(stack.pop());
+        var returnValue = parseInt(stack.pop());
 
         return returnValue;
     }
 
     function isOperand(ch) {
-        return ((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <='Z') || (ch >= '1' && ch <= 9));
+        return ((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <='Z') || (ch >= 0 && ch <= 9));
     }
 
 });
