@@ -1,35 +1,27 @@
 $(function(){
     var $display = $("#display");
-    //var $clearAll = $("#clearAll, #clear");
+    var $clearAll = $("#clearAll, #clear");
     var $equals = $("#equals");
     var $numButtons = $(":button").not("#equals, #clear, #clearall");
-    var _infix = '';
-    var _displayString = '';
+    var _infix = "";
+    var _displayString = "";
 
     $numButtons.on({
         "click":function () {
             var number = $(this).attr('id')
 
             if ($(this).hasClass("operator")) {
-                if (isNaN(_infix[_infix.length - 1])) {
+                if (isNaN(_infix[_infix.length - 1]) && _infix[_infix.length - 1] !== "(" && _infix[_infix.length - 1] !== ")") {
                     return;
                 }
-                if(_infix.length <= 10){
-                    _infix += number;
-                }
+                _infix += number;
             }else {
-                if(_infix.length <= 10) {
-                    _infix += number;
-                }
-            }
-
-             function htmlEntities(str) {
-                 _displayString = str.replace(/\*/g, '&times;').replace(/-/g, '&minus;').replace(/\+/g, '&plus;');
+                _infix += number;
             }
 
             htmlEntities(_infix);
 
-            $(display).html(_displayString);// .text(_displayString);
+            $(display).html(_displayString);
         }
     });
 
@@ -37,19 +29,27 @@ $(function(){
         "click": function () {
 
             var postfix = toPostFix(_infix);
-            //var htmlEntities = htmlEntities(postfix);
-
             postfix = postfix.split(" ");
             postfix.clean("");
 
             var rpn = evalRPN(postfix);
 
             $(display).text(rpn);
+            _infix = rpn;
+            _displayString = rpn;
+        }
+    });
+
+    $clearAll.on({
+        "click": function () {
+            $(display).text("");
+            _displayString = "";
+            _infix = "";
         }
     });
 
     function htmlEntities(str) {
-        return str.replace(/&times;/g, '*'); //.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        _displayString = str.replace(/\*/g, '&times;').replace(/-/g, '&minus;').replace(/\+/g, '&plus;');
     }
 
     Array.prototype.clean = function(deleteValue) {
@@ -67,31 +67,24 @@ $(function(){
         var postfixStr = "";
         var stack = [];
 
-        //loop through the length of the infix string
         while(count < infixStr.length){
-            //check of it is operand or not
             if(isOperand(infixStr[count])) {
                 postfixStr += infixStr[count];
             } else {
                 postfixStr += " ";
-                //if operator is other than ( )
                 if(infixStr[count] !== '(' && infixStr[count] !== ")"){
                     while(stack.length > 0){
-                        //Till the time stack's top operator greater than equal to infixStr operator than add to postfixStr else break
                         if(prec(stack[stack.length-1]) >= prec(infixStr[count])){
                             postfixStr += stack.pop();
                         } else {
                             break;
                         }
                     }
-                    //push the current infixStr operator to stack
                     stack.push(infixStr[count]);
                 } else {
-                    //if infixStr operator is ( than simply push it to stack
                     if(infixStr[count] === "("){
                         stack.push(infixStr[count]);
                     } else {
-                        //if infixStr operator is ) than push all the elements from stack to postfixStr till we get ( from stack
                         while(stack[stack.length-1] !== '(' && stack[stack.length-1] !== undefined){
                             postfixStr += stack.pop();
                         }
@@ -101,8 +94,6 @@ $(function(){
             }
             count++;
         }
-
-        //Adding the rest of the operand in stack to postfix string
         while(stack.length > 0){
             postfixStr += " ";
             postfixStr += stack.pop();
