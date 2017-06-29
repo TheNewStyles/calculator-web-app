@@ -1,17 +1,17 @@
 $(function(){
-    var $display = $("#display");
     var $clearAll = $("#clearAll, #clear");
     var $equals = $("#equals");
     var $numButtons = $(":button").not("#equals, #clear, #clearall");
     var _infix = "";
     var _displayString = "";
+    var opsArr = ["*", "/", "+", "-"]
 
     $numButtons.on({
         "click":function () {
             var number = $(this).attr('id')
 
             if ($(this).hasClass("operator")) {
-                if (isNaN(_infix[_infix.length - 1]) && _infix[_infix.length - 1] !== "(" && _infix[_infix.length - 1] !== ")") {
+                if ( opsArr.includes(_infix[_infix.length - 1]) && _infix[_infix.length - 1] !== "(" && _infix[_infix.length - 1] !== ")") {
                     return;
                 }
                 _infix += number;
@@ -124,8 +124,8 @@ $(function(){
             if (operators.indexOf(tokens[i]) == -1) {
                 stack.push(tokens[i]);
             } else {
-                var a = parseInt(stack.pop());
-                var b = parseInt(stack.pop());
+                var a = parseFloat(stack.pop());
+                var b = parseFloat(stack.pop());
                 switch (tokens[i]) {
                     case "+":
                         stack.push(a + b);
@@ -143,13 +143,13 @@ $(function(){
             }
         }
 
-        var returnValue = parseInt(stack.pop());
+        var returnValue = parseFloat(stack.pop());
 
         return returnValue;
     }
 
     function isOperand(ch) {
-        return ((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <='Z') || (ch >= 0 && ch <= 9));
+        return !(opsArr.includes(ch));
     }
 
 });
