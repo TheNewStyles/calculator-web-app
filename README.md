@@ -1,5 +1,5 @@
 # javascript_calculator
-A freecodecamp project 
+I built this as a freecodecamp project. The requirments are listed below. I convert the string into Reverse Polish Notaton (postfix) by using the Shunting-yard algorithm and then evaluate the string. 
 
 Build a JavaScript Calculator
 
