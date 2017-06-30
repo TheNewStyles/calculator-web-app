@@ -4,7 +4,7 @@ $(function(){
     var $numButtons = $(":button").not("#equals, #clear, #clearall");
     var _infix = "";
     var _displayString = "";
-    var opsArr = ["*", "/", "+", "-"]
+    var opsArr = ["*", "/", "+", "-", "(", ")"];
 
     $numButtons.on({
         "click":function () {
@@ -68,7 +68,7 @@ $(function(){
         var stack = [];
 
         while(count < infixStr.length){
-            if(isOperand(infixStr[count])) {
+            if(isNotOperand(infixStr[count])) {
                 postfixStr += infixStr[count];
             } else {
                 postfixStr += " ";
@@ -148,7 +148,7 @@ $(function(){
         return returnValue;
     }
 
-    function isOperand(ch) {
+    function isNotOperand(ch) {
         return !(opsArr.includes(ch));
     }
 
