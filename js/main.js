@@ -1,10 +1,12 @@
 $(function(){
-    var $clearAll = $("#clearAll, #clear");
-    var $equals = $("#equals");
-    var $numButtons = $(":button").not("#equals, #clear, #clearall");
-    var _infix = "";
-    var _displayString = "";
-    var opsArr = ["*", "/", "+", "-", "(", ")"];
+    "use strict";
+
+    const $clearAll = $("#clearAll, #clear");
+    const $equals = $("#equals");
+    const $numButtons = $(":button").not("#equals, #clear, #clearall");
+    let _infix = "";
+    let _displayString = "";
+    const opsArr = ["*", "/", "+", "-", "(", ")"];
 
     $numButtons.on({
         "click":function () {
@@ -63,6 +65,7 @@ $(function(){
     };
 
     function toPostFix(infixStr) {
+        //TODO bug in chaining
         var count =0;
         var postfixStr = "";
         var stack = [];
